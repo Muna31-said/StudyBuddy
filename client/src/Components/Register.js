@@ -1,84 +1,83 @@
-import React, { useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  Button,
-} from "reactstrap";
+import { Label, Button, Container, Row, Col } from "reactstrap";
+import { useState } from "react";
+//import * as yup from "yup";
+//import { useForm } from "react-hook-form";
+//import { yupResolver } from "@hookform/resolvers/yup";
+// Import the useSelector and useDispatch from react-redux.
+import { useDispatch } from "react-redux";
+
+import { registerUser } from "../Features/UserSlice";
 
 const Register = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // Create the state variables required for all the data from the form.
+  const [name, setname] = useState("");
+  const [email, setemail] = useState("");
+  const [password, setpassword] = useState("");
 
-  const handleRegister = (e) => {
-    e.preventDefault();
+  // Declare a variable for the useDispatch.
+  const dispatch = useDispatch();
 
-    if (!name || !email || !password) {
-      alert("Please fill all fields");
-      return;
+  // ✅ Handle form submission
+  const handleRegister = () => {
+    try {
+      // You can handle the form submission here
+
+      const userData = {
+        name: name,
+        email: email,
+        password: password,
+      };
+      alert("Registered.");
+      dispatch(registerUser(userData)); // Dispatch an action to add a new user by passing the user data to the Redux store
+    } catch (error) {
+      console.log(error);
     }
-
-    alert("Registration Successful");
-
-    console.log({
-      name,
-      email,
-      password,
-    });
   };
 
   return (
-    <Container className="mt-5">
-      <Row className="justify-content-center">
-        <Col md={5}>
-          <Card className="shadow p-3">
-            <CardBody>
-              <h2 className="text-center mb-4">Register Form</h2>
-
-              <Form onSubmit={handleRegister}>
-                <FormGroup>
-                  <Label>Student Name</Label>
-                  <Input
-                    type="text"
-                    placeholder="Enter your name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </FormGroup>
-
-                <FormGroup>
-                  <Label>Email</Label>
-                  <Input
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </FormGroup>
-
-                <FormGroup>
-                  <Label>Password</Label>
-                  <Input
-                    type="password"
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </FormGroup>
-
-                <Button color="success" block>
-                  Register
-                </Button>
-              </Form>
-            </CardBody>
-          </Card>
+    <Container fluid className="mt-4">
+      <Row>
+        <Col md={4}>
+          <h1 className="mt-3 mb-3">Register Form</h1>
+          {/* Use the register function to register all form elements */}
+          {/* Display an error message display for each validation error encountered. */}
+          <form onSubmit={handleRegister}>
+            <section>
+              <div className="form-group mb-3">
+                <Label>Student Name</Label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter student name..."
+                  name="name"
+                  onChange={(e) => setname(e.target.value)}
+                />
+              </div>
+              <div className="form-group mb-3">
+                <Label>Email</Label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter email..."
+                  name="email"
+                  onChange={(e) => setemail(e.target.value)}
+                />
+              </div>
+              <div className="form-group mb-3">
+                <Label>password</Label>
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder="Enter password..."
+                  name="password"
+                  onChange={(e) => setpassword(e.target.value)}
+                />
+              </div>
+              <Button color="primary" className="button">
+                Register
+              </Button>
+            </section>
+          </form>
         </Col>
       </Row>
     </Container>
