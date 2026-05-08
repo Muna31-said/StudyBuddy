@@ -142,6 +142,9 @@ const Skills = () => {
                   {/* Info */}
                   <div style={{ fontSize: "14px", color: "#555" }}>
                     <p>
+                      <b>Experience:</b> {item.experience}
+                    </p>
+                    <p>
                       <b>Type:</b> {item.type}
                     </p>
                     <p>

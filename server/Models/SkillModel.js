@@ -25,6 +25,9 @@ const SkillSchema = mongoose.Schema({
     type: Date,
     required: true,
   },
+  experience: {
+    type: String,
+  },
 });
 
 const SkillModel = mongoose.model("skills", SkillSchema);

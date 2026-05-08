@@ -8,6 +8,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import AddSkill from "./Components/AddSkill";
 import Skills from "./Components/Skills";
+import Login from "./Components/Login";
+import Register from "./Components/Register";
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
             <Route path="/" element={<Home />}></Route>
             <Route path="/add" element={<AddSkill />}></Route>
             <Route path="/skills" element={<Skills />}></Route>
+            <Route path="/login" element={<Login />}></Route>
+            <Route path="/register" element={<Register />}></Route>
           </Routes>
         </Row>
         <Row>

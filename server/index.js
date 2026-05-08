@@ -6,8 +6,9 @@ import SkillModel from "./Models/SkillModel.js";
 const app = express();
 app.use(express.json());
 app.use(cors());
+const connectString =
+  "mongodb://newmona73_db_user:Mona12345@ac-itna3a4-shard-00-00.1giidrs.mongodb.net:27017,ac-itna3a4-shard-00-01.1giidrs.mongodb.net:27017,ac-itna3a4-shard-00-02.1giidrs.mongodb.net:27017/stbuDb?ssl=true&replicaSet=atlas-6pin09-shard-0&authSource=admin&appName=studybuddyCluster";
 
-const connectString = "mongodb://localhost:27017/stbuDb";
 mongoose.connect(connectString);
 
 app.post("/addSkill", async (req, res) => {
@@ -64,6 +65,7 @@ app.post("/addSkill", async (req, res) => {
       type,
       city,
       date,
+      experience,
     });
 
     await newSkill.save();
