@@ -12,7 +12,14 @@ app.use(cors());
 const connectString =
   "mongodb://newmona73_db_user:Mona12345@ac-itna3a4-shard-00-00.1giidrs.mongodb.net:27017,ac-itna3a4-shard-00-01.1giidrs.mongodb.net:27017,ac-itna3a4-shard-00-02.1giidrs.mongodb.net:27017/stbuDb?ssl=true&replicaSet=atlas-6pin09-shard-0&authSource=admin&appName=studybuddyCluster";
 
-mongoose.connect(connectString);
+mongoose
+  .connect(connectString)
+  .then(() => {
+    console.log("MongoDB Connected ✅");
+  })
+  .catch((error) => {
+    console.log("MongoDB Error ❌", error);
+  });
 
 app.post("/addSkill", async (req, res) => {
   try {
@@ -157,8 +164,6 @@ app.post("/login", async (req, res) => {
     });
   }
 });
-
-
 
 app.listen(3001, () => {
   console.log("You are connected");
