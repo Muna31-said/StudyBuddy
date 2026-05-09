@@ -1,22 +1,72 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getSkills } from "../Features/SkillSlice";
-import { Card, CardBody, Button, Row, Col, Container } from "reactstrap";
+
+import { Card, CardBody, Button, Row, Col, Container, Input } from "reactstrap";
+
 import { useNavigate } from "react-router-dom";
+
+import axios from "axios";
 
 const Skills = () => {
   const dispatch = useDispatch();
-  const skills = useSelector((state) => state.skill.value);
+
+  const skills = useSelector((state) => state.skill.value || []);
+
   const navigate = useNavigate();
+
+  // Current User
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+
+  // Search
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     dispatch(getSkills());
   }, [dispatch]);
 
+  // Send Request
+  const sendRequest = async (item) => {
+    try {
+      await axios.post("http://localhost:3001/request", {
+        sender: currentUser._id,
+        receiver: item.user._id,
+        skill: item._id,
+      });
+
+      alert("Request Sent ✅");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Delete Skill
+  const deleteSkill = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3001/skill/${id}`);
+
+      dispatch(getSkills());
+
+      alert("Skill Deleted ✅");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Filter
+  const filteredSkills = skills.filter(
+    (item) =>
+      item.skill.toLowerCase().includes(search.toLowerCase()) ||
+      item.city.toLowerCase().includes(search.toLowerCase()),
+  );
+
   const getLevelColor = (level) => {
     if (level === "Beginner") return "#2ecc71";
+
     if (level === "Intermediate") return "#f39c12";
+
     if (level === "Advanced") return "#e74c3c";
+
     return "#999";
   };
 
@@ -29,21 +79,50 @@ const Skills = () => {
   };
 
   return (
-    <div style={{ background: "#f4fffb", minHeight: "100vh" }}>
+    <div
+      style={{
+        background: "#f4fffb",
+        minHeight: "100vh",
+      }}
+    >
       <Container>
-        {/* 🔥 Header */}
+        {/* Header */}
         <div style={{ padding: "40px 20px" }}>
-          <h2 style={{ color: "#16a085", fontWeight: "700" }}>
+          <h2
+            style={{
+              color: "#16a085",
+              fontWeight: "700",
+            }}
+          >
             Explore Skills
           </h2>
 
           <p
-            style={{ color: "#524f4fa6", maxWidth: "600px", fontSize: "22px" }}
+            style={{
+              color: "#524f4fa6",
+              maxWidth: "600px",
+              fontSize: "22px",
+            }}
           >
             Browse available skills shared by students. You can request help,
             collaborate, and learn new things from others.
           </p>
 
+          {/* Search */}
+          <Input
+            placeholder="Search by skill or city..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{
+              marginTop: "25px",
+              maxWidth: "400px",
+              borderRadius: "12px",
+              padding: "12px",
+              border: "1px solid #ddd",
+            }}
+          />
+
+          {/* Add Skill */}
           <Button
             style={{
               background: "linear-gradient(135deg, #c6e75b, #1abc9c)",
@@ -65,21 +144,28 @@ const Skills = () => {
             }
             onClick={() => navigate("/add")}
           >
-            <span style={{ color: "#ffffff", fontWeight: "bold" }}>
+            <span
+              style={{
+                color: "#ffffff",
+                fontWeight: "bold",
+              }}
+            >
               + Add Skill
             </span>
           </Button>
         </div>
 
-        {/* 🔥 Cards */}
+        {/* Cards */}
         <Row>
-          {skills.map((item) => (
+          {filteredSkills.map((item) => (
             <Col
               md="4"
               sm="6"
               xs="12"
               key={item._id}
-              style={{ marginBottom: "30px" }}
+              style={{
+                marginBottom: "30px",
+              }}
             >
               <Card
                 style={{
@@ -91,27 +177,34 @@ const Skills = () => {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = "translateY(-6px)";
+
                   e.currentTarget.style.boxShadow =
                     "0 10px 25px rgba(0,0,0,0.15)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = "translateY(0)";
+
                   e.currentTarget.style.boxShadow =
                     "0 6px 20px rgba(0,0,0,0.08)";
                 }}
               >
                 <CardBody>
                   {/* Skill */}
-                  <h4 style={{ fontWeight: "600", color: "#16a085" }}>
+                  <h4
+                    style={{
+                      fontWeight: "600",
+                      color: "#16a085",
+                    }}
+                  >
                     {item.skill}
                   </h4>
 
-                  {/* Accent line */}
+                  {/* Accent */}
                   <div
                     style={{
                       width: "40px",
                       height: "3px",
-                      backgroundColor: "#6c5ce7", // 🔥 بدل الذهبي
+                      backgroundColor: "#6c5ce7",
                       marginBottom: "10px",
                       borderRadius: "5px",
                     }}
@@ -134,45 +227,105 @@ const Skills = () => {
                         marginRight: "8px",
                       }}
                     ></div>
-                    <span style={{ fontSize: "13px", color: "#555" }}>
+
+                    <span
+                      style={{
+                        fontSize: "13px",
+                        color: "#555",
+                      }}
+                    >
                       {item.level}
                     </span>
                   </div>
 
                   {/* Info */}
-                  <div style={{ fontSize: "14px", color: "#555" }}>
+                  <div
+                    style={{
+                      fontSize: "14px",
+                      color: "#555",
+                    }}
+                  >
+                    <p>
+                      <b>Posted by:</b> {item.user?.name}
+                    </p>
+
                     <p>
                       <b>Experience:</b> {item.experience}
                     </p>
+
                     <p>
                       <b>Type:</b> {item.type}
                     </p>
+
                     <p>
                       <b>City:</b> {item.city}
                     </p>
+
                     <p>
                       <b>Date:</b> {formatDate(item.date)}
                     </p>
+
+                    <p>
+                      <b>Voice Call:</b>{" "}
+                      {item.voiceCall ? "Available" : "Not Available"}
+                    </p>
                   </div>
 
-                  {/* Button */}
-                  <Button
-                    style={{
-                      width: "100%",
-                      backgroundColor: "#16a085",
-                      border: "none",
-                      borderRadius: "8px",
-                      marginTop: "10px",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.target.style.backgroundColor = "#138d75")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.target.style.backgroundColor = "#16a085")
-                    }
-                  >
-                    Request
-                  </Button>
+                  {/* Buttons */}
+                  {item.user?._id === currentUser._id ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "10px",
+                        marginTop: "10px",
+                      }}
+                    >
+                      {/* Edit */}
+                      <Button
+                        style={{
+                          flex: 1,
+                          backgroundColor: "#f39c12",
+                          border: "none",
+                          borderRadius: "8px",
+                        }}
+                        onClick={() => navigate(`/update/${item._id}`)}
+                      >
+                        Edit
+                      </Button>
+
+                      {/* Delete */}
+                      <Button
+                        style={{
+                          flex: 1,
+                          backgroundColor: "#e74c3c",
+                          border: "none",
+                          borderRadius: "8px",
+                        }}
+                        onClick={() => deleteSkill(item._id)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      style={{
+                        width: "100%",
+                        backgroundColor: "#16a085",
+                        border: "none",
+                        borderRadius: "8px",
+                        marginTop: "10px",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.target.style.backgroundColor = "#138d75")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.target.style.backgroundColor = "#16a085")
+                      }
+                      onClick={() => sendRequest(item)}
+                    >
+                      Request
+                    </Button>
+                  )}
                 </CardBody>
               </Card>
             </Col>

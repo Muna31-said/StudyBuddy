@@ -7,7 +7,7 @@ export const registerUser = createAsyncThunk(
   "users/registerUser",
   async (userData) => {
     try {
-      const response = await axios.post("http://localhost:3001/registerUser", {
+      const response = await axios.post("http://localhost:3001/register", {
         name: userData.name,
         email: userData.email,
         password: userData.password,

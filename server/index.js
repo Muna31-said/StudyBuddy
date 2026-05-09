@@ -3,6 +3,7 @@ import express from "express";
 import mongoose from "mongoose";
 import SkillModel from "./Models/SkillModel.js";
 import UserModel from "./Models/UserModel.js";
+import RequestModel from "./Models/RequestModel.js";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 
@@ -23,7 +24,8 @@ mongoose
 
 app.post("/addSkill", async (req, res) => {
   try {
-    const { skill, level, contact, type, city, date } = req.body;
+    const { skill, level, contact, type, city, date, voiceCall, user } =
+      req.body;
 
     // 1️⃣ Required fields
     if (!skill || !level || !contact || !type || !city || !date) {
@@ -76,6 +78,8 @@ app.post("/addSkill", async (req, res) => {
       city,
       date,
       experience,
+      voiceCall,
+      user,
     });
 
     await newSkill.save();
@@ -92,7 +96,7 @@ app.post("/addSkill", async (req, res) => {
 
 app.get("/skills", async (req, res) => {
   try {
-    const skills = await SkillModel.find();
+    const skills = await SkillModel.find().populate("user");
     res.json(skills);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -102,6 +106,7 @@ app.get("/skills", async (req, res) => {
 // ================= REGISTER =================
 app.post("/register", async (req, res) => {
   try {
+    console.log("Register route working");
     const { name, email, password } = req.body;
 
     const existingUser = await UserModel.findOne({ email });
@@ -119,8 +124,9 @@ app.post("/register", async (req, res) => {
       email,
       password: hashedPassword,
     });
-
     await user.save();
+    console.log("User saved");
+    console.log(user);
 
     res.status(201).json({
       message: "User registered successfully",
@@ -132,7 +138,6 @@ app.post("/register", async (req, res) => {
     });
   }
 });
-
 // ================= LOGIN =================
 app.post("/login", async (req, res) => {
   try {
@@ -165,6 +170,157 @@ app.post("/login", async (req, res) => {
   }
 });
 
+//requests
+
+app.post("/request", async (req, res) => {
+  try {
+    const { sender, receiver, skill } = req.body;
+
+    const newRequest = new RequestModel({
+      sender,
+      receiver,
+      skill,
+    });
+
+    await newRequest.save();
+
+    res.status(201).json({
+      message: "Request sent successfully",
+      newRequest,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
+app.get("/requests/:id", async (req, res) => {
+  try {
+    const requests = await RequestModel.find({
+      receiver: req.params.id,
+    })
+      .populate("sender")
+      .populate("skill");
+
+    res.json(requests);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
+//Accept req
+app.put("/request/accept/:id", async (req, res) => {
+  try {
+    const updatedRequest = await RequestModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        status: "accepted",
+      },
+      { new: true },
+    );
+
+    res.json(updatedRequest);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
+//reject req
+app.put("/request/reject/:id", async (req, res) => {
+  try {
+    const updatedRequest = await RequestModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        status: "rejected",
+      },
+      { new: true },
+    );
+
+    res.json(updatedRequest);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
+//sent req
+app.get("/sentRequests/:id", async (req, res) => {
+  try {
+    const requests = await RequestModel.find({
+      sender: req.params.id,
+    })
+      .populate("receiver")
+      .populate("skill");
+
+    res.json(requests);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
+//delete skill
+app.delete("/skill/:id", async (req, res) => {
+  try {
+    await SkillModel.findByIdAndDelete(req.params.id);
+
+    res.json({
+      message: "Skill deleted",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+//del req
+app.delete("/request/:id", async (req, res) => {
+  try {
+    await RequestModel.findByIdAndDelete(req.params.id);
+
+    res.json({
+      message: "Request deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
+//update
+app.get("/skill/:id", async (req, res) => {
+  try {
+    const skill = await SkillModel.findById(req.params.id);
+
+    res.json(skill);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+//update skill
+app.put("/skill/:id", async (req, res) => {
+  try {
+    await SkillModel.findByIdAndUpdate(req.params.id, req.body);
+
+    res.json({
+      message: "Skill Updated",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
 app.listen(3001, () => {
   console.log("You are connected");
 });

@@ -75,7 +75,7 @@ const Home = () => {
               (e.target.style.background =
                 "linear-gradient(135deg, #16a085, #1abc9c)")
             }
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/skills")}
           >
             <span style={{ color: "#ffffff", fontWeight: "bold" }}>
               Get Started 🚀

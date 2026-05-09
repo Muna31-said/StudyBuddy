@@ -16,6 +16,8 @@ import { skillSchemaValidation } from "../Validation/SkillValidSchema";
 import axios from "axios";
 
 const AddSkill = () => {
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+  console.log(currentUser);
   const {
     control,
     handleSubmit,
@@ -26,9 +28,12 @@ const AddSkill = () => {
   });
 
   const onSubmit = async (data) => {
+    console.log(data);
     try {
-      await axios.post("http://localhost:3001/addSkill", data);
-      alert("Added ✅");
+      await axios.post("http://localhost:3001/addSkill", {
+        ...data,
+        user: currentUser._id,
+      });
       reset();
     } catch (error) {
       console.log(error);
@@ -140,6 +145,24 @@ const AddSkill = () => {
                   />
 
                   <p style={errorStyle}>{errors.type?.message}</p>
+                </FormGroup>
+
+                <FormGroup check className="mt-3">
+                  <Label check>
+                    <Controller
+                      name="voiceCall"
+                      control={control}
+                      defaultValue={false}
+                      render={({ field }) => (
+                        <Input
+                          type="checkbox"
+                          checked={field.value}
+                          onChange={(e) => field.onChange(e.target.checked)}
+                        />
+                      )}
+                    />{" "}
+                    Voice Call Available
+                  </Label>
                 </FormGroup>
               </Col>
 

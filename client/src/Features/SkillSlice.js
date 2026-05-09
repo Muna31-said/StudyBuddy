@@ -17,6 +17,7 @@ export const saveSkill = createAsyncThunk(
         type: skillData.type,
         city: skillData.city,
         date: skillData.date,
+        voiceCall: skillData.voiceCall,
       });
 
       // ✅ الصحيح

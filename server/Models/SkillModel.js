@@ -28,6 +28,15 @@ const SkillSchema = mongoose.Schema({
   experience: {
     type: String,
   },
+  voiceCall: {
+    type: Boolean,
+    default: false,
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
+    required: true,
+  },
 });
 
 const SkillModel = mongoose.model("skills", SkillSchema);

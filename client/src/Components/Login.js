@@ -1,16 +1,11 @@
-import { Label, Button, Container, Row, Col } from "reactstrap";
-import { useState } from "react";
-//import * as yup from "yup";
-//import { useForm } from "react-hook-form";
-//import { yupResolver } from "@hookform/resolvers/yup";
-// Import the useSelector and useDispatch from react-redux.
+import { Label, Button, Container, Row, Col, Card, CardBody } from "reactstrap";
+
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { login } from "../Features/UserSlice";
 
 const Login = () => {
-  // Create the state variables required for all the data from the form.
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
 
@@ -20,66 +15,135 @@ const Login = () => {
   const user = useSelector((state) => state.users?.user);
   const isSuccess = useSelector((state) => state.users?.isSuccess);
 
-  // ✅ Handle form submission
+  // Login Function
   const handleLogin = (e) => {
-    if (e) e.preventDefault();
+    e.preventDefault();
+
     try {
       const userData = {
         email,
         password,
       };
-      dispatch(login(userData));
+
+      dispatch(login(userData)).then((result) => {
+        if (result.payload) {
+          localStorage.setItem("user", JSON.stringify(result.payload));
+        }
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
+  // Navigate after successful login
   useEffect(() => {
     if (isSuccess) {
-      navigate("/");
-    } else {
-      navigate("/login");
+      navigate("/home");
     }
   }, [isSuccess, user, navigate]);
 
   return (
-    <Container fluid className="mt-4">
-      <Row>
-        <Col md={4}>
-          <h1 className="mt-3 mb-3">Login Form</h1>
-          {/* Use the Login function to Login all form elements */}
-          {/* Display an error message display for each validation error encountered. */}
-          <form>
-            <section>
-              <div className="form-group mb-3">
-                <Label>Email</Label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter email..."
-                  name="email"
-                  onChange={(e) => setemail(e.target.value)}
-                />
+    <Container
+      fluid
+      className="d-flex justify-content-center align-items-center"
+      style={{
+        minHeight: "100vh",
+        backgroundColor: "#eef5f3",
+      }}
+    >
+      <Row className="w-100 justify-content-center">
+        <Col md={5} lg={4}>
+          <Card
+            style={{
+              border: "none",
+              borderRadius: "20px",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+            }}
+          >
+            <CardBody className="p-5">
+              {/* Title */}
+              <div className="text-center mb-4">
+                <h1
+                  style={{
+                    color: "#138d75",
+                    fontWeight: "bold",
+                  }}
+                >
+                  StudyBuddy
+                </h1>
+
+                <p style={{ color: "#666" }}>
+                  Login to continue learning and sharing skills.
+                </p>
               </div>
-              <div className="form-group mb-3">
-                <Label>password</Label>
-                <input
-                  type="password"
-                  className="form-control"
-                  placeholder="Enter password..."
-                  name="password"
-                  onChange={(e) => setpassword(e.target.value)}
-                />
+
+              {/* Form */}
+              <form onSubmit={handleLogin}>
+                <div className="form-group mb-4">
+                  <Label>Email</Label>
+
+                  <input
+                    type="email"
+                    className="form-control"
+                    placeholder="Enter your email"
+                    name="email"
+                    onChange={(e) => setemail(e.target.value)}
+                    style={{
+                      padding: "12px",
+                      borderRadius: "10px",
+                    }}
+                  />
+                </div>
+
+                <div className="form-group mb-4">
+                  <Label>Password</Label>
+
+                  <input
+                    type="password"
+                    className="form-control"
+                    placeholder="Enter your password"
+                    name="password"
+                    onChange={(e) => setpassword(e.target.value)}
+                    style={{
+                      padding: "12px",
+                      borderRadius: "10px",
+                    }}
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  block
+                  style={{
+                    backgroundColor: "#138d75",
+                    border: "none",
+                    padding: "12px",
+                    borderRadius: "10px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Login
+                </Button>
+              </form>
+
+              {/* Register Link */}
+              <div className="text-center mt-4">
+                <p style={{ color: "#666" }}>
+                  Don’t have an account?{" "}
+                  <Link
+                    to="/register"
+                    style={{
+                      color: "#138d75",
+                      fontWeight: "bold",
+                      textDecoration: "none",
+                    }}
+                  >
+                    Register here
+                  </Link>
+                </p>
               </div>
-              <Button
-                color="primary"
-                className="button"
-                onClick={(e) => handleLogin(e)}
-              >
-                Login
-              </Button>
-            </section>
-          </form>
+            </CardBody>
+          </Card>
         </Col>
       </Row>
     </Container>
