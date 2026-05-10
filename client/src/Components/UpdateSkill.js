@@ -17,10 +17,17 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const UpdateSkill = () => {
   const [skill, setSkill] = useState("");
+
   const [level, setLevel] = useState("");
+
   const [contact, setContact] = useState("");
+
   const [city, setCity] = useState("");
+
   const [type, setType] = useState("");
+
+  // Voice Call
+  const [voiceCall, setVoiceCall] = useState(false);
 
   const navigate = useNavigate();
 
@@ -36,10 +43,17 @@ const UpdateSkill = () => {
       const response = await axios.get(`http://localhost:3001/skill/${id}`);
 
       setSkill(response.data.skill);
+
       setLevel(response.data.level);
+
       setContact(response.data.contact);
+
       setCity(response.data.city);
+
       setType(response.data.type);
+
+      // Voice Call
+      setVoiceCall(response.data.voiceCall);
     } catch (error) {
       console.log(error);
     }
@@ -56,6 +70,7 @@ const UpdateSkill = () => {
         contact,
         city,
         type,
+        voiceCall,
       });
 
       alert("Skill Updated ✅");
@@ -158,12 +173,25 @@ const UpdateSkill = () => {
                 </Input>
               </FormGroup>
 
+              {/* Voice Call */}
+              <FormGroup check className="mt-3">
+                <Label check>
+                  <Input
+                    type="checkbox"
+                    checked={voiceCall}
+                    onChange={(e) => setVoiceCall(e.target.checked)}
+                  />{" "}
+                  Voice Call Available
+                </Label>
+              </FormGroup>
+
+              {/* Button */}
               <Button
                 style={{
                   width: "100%",
                   backgroundColor: "#16a085",
                   border: "none",
-                  marginTop: "15px",
+                  marginTop: "20px",
                 }}
               >
                 Update Skill

@@ -53,6 +53,15 @@ function Header() {
         >
           Skills
         </Link>
+
+        <Link
+          to="/about"
+          style={linkStyle}
+          onMouseEnter={(e) => (e.target.style.color = "#ffd54f")}
+          onMouseLeave={(e) => (e.target.style.color = "white")}
+        >
+          About
+        </Link>
       </div>
 
       {/* Right Side */}

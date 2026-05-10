@@ -53,13 +53,16 @@ const Skills = () => {
     }
   };
 
-  // Filter
-  const filteredSkills = skills.filter(
-    (item) =>
-      item.skill.toLowerCase().includes(search.toLowerCase()) ||
-      item.city.toLowerCase().includes(search.toLowerCase()),
-  );
+  // Filter + newest first
+  const filteredSkills = skills
 
+    .filter(
+      (item) =>
+        item.skill.toLowerCase().includes(search.toLowerCase()) ||
+        item.city.toLowerCase().includes(search.toLowerCase()),
+    )
+
+    .sort((a, b) => b._id.localeCompare(a._id));
   const getLevelColor = (level) => {
     if (level === "Beginner") return "#2ecc71";
 

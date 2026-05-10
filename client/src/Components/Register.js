@@ -1,7 +1,9 @@
 import { Label, Button, Container, Row, Col, Card, CardBody } from "reactstrap";
 
 import { useState } from "react";
+
 import { useDispatch } from "react-redux";
+
 import { Link, useNavigate } from "react-router-dom";
 
 import { registerUser } from "../Features/UserSlice";
@@ -12,6 +14,7 @@ const Register = () => {
   const [password, setpassword] = useState("");
 
   const dispatch = useDispatch();
+
   const navigate = useNavigate();
 
   // Register Function
@@ -25,11 +28,18 @@ const Register = () => {
         password,
       };
 
-      await dispatch(registerUser(userData));
+      const result = await dispatch(registerUser(userData));
 
-      alert("Registered Successfully");
+      // Success
+      if (result.payload) {
+        // Save user
+        localStorage.setItem("user", JSON.stringify(result.payload));
 
-      navigate("/login");
+        alert("Registered Successfully ✅");
+
+        // Go Home
+        navigate("/home");
+      }
     } catch (error) {
       console.log(error);
     }

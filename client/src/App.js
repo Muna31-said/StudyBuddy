@@ -19,6 +19,7 @@ import Skills from "./Components/Skills";
 import Login from "./Components/Login";
 import Register from "./Components/Register";
 import Requests from "./Components/Requests";
+import About from "./Components/About";
 
 function AppContent() {
   const location = useLocation();
@@ -43,25 +44,21 @@ function AppContent() {
         <Routes>
           {/* أول صفحة */}
           <Route path="/" element={<Login />} />
-
           {/* Login */}
           <Route path="/login" element={<Login />} />
-
           {/* Register */}
           <Route path="/register" element={<Register />} />
-
           {/* Home */}
           <Route path="/home" element={<Home />} />
-
           {/* Skills */}
           <Route path="/skills" element={<Skills />} />
-
           {/* Add Skill */}
           <Route path="/add" element={<AddSkill />} />
-
           {/* Requests */}
           <Route path="/request" element={<Requests />} />
           <Route path="/update/:id" element={<UpdateSkill />} />
+          //test
+          <Route path="about" element={<About />} />
         </Routes>
       </Row>
 
